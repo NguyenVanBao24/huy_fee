@@ -1,7 +1,15 @@
+"use client";
 import React from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const Header: React.FC = () => {
+  const router = useRouter();
+
+  const handlelogout = async () => {
+    router.push("/auth");
+    localStorage.setItem("token", "");
+  };
   return (
     <header className="bg-blue-600 text-white p-4 shadow-md">
       <nav className="container mx-auto flex justify-between items-center">
@@ -18,8 +26,8 @@ const Header: React.FC = () => {
             </Link>
           </li>
           <li>
-            <Link href="/contact" className="hover:underline">
-              Contact
+            <Link href="/" className="hover:underline" onClick={handlelogout}>
+              Logout
             </Link>
           </li>
         </ul>
