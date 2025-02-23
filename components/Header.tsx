@@ -16,10 +16,14 @@ const Header: React.FC = () => {
       <nav className="container mx-auto flex justify-between items-center">
         <h1 className="text-xl font-bold tracking-wide">MyApp</h1>
         <ul className="flex space-x-6 text-lg">
-          {["/", "User", "Admin"].map((item) => (
-            <li key={item}>
-              <Link href={`/${item.toLowerCase()}`} className="hover:text-gray-300 transition">
-                {item}
+          {[
+            { href: "/", name: "Home" },
+            { href: "/user", name: "User" },
+            { href: "/admin", name: "Admin" },
+          ].map((item) => (
+            <li key={item.href}>
+              <Link href={item.href} className="hover:text-gray-300 transition">
+                {item.name}
               </Link>
             </li>
           ))}
