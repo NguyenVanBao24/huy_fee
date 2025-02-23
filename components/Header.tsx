@@ -1,34 +1,35 @@
 "use client";
-import React from "react";
+import React, { useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 const Header: React.FC = () => {
   const router = useRouter();
 
-  const handlelogout = async () => {
+  const handleLogout = useCallback(() => {
+    localStorage.removeItem("token");
     router.push("/auth");
-    localStorage.setItem("token", "");
-  };
+  }, [router]);
+
   return (
     <header className="bg-blue-600 text-white p-4 shadow-md">
       <nav className="container mx-auto flex justify-between items-center">
-        <div className="text-xl font-bold">MyApp</div>
-        <ul className="flex space-x-4">
+        <h1 className="text-xl font-bold tracking-wide">MyApp</h1>
+        <ul className="flex space-x-6 text-lg">
+          {["/", "User", "Admin"].map((item) => (
+            <li key={item}>
+              <Link href={`/${item.toLowerCase()}`} className="hover:text-gray-300 transition">
+                {item}
+              </Link>
+            </li>
+          ))}
           <li>
-            <Link href="/" className="hover:underline">
-              Home
-            </Link>
-          </li>
-          <li>
-            <Link href="/user" className="hover:underline">
-              User
-            </Link>
-          </li>
-          <li>
-            <Link href="/" className="hover:underline" onClick={handlelogout}>
+            <button
+              onClick={handleLogout}
+              className="hover:text-gray-300 transition focus:outline-none"
+            >
               Logout
-            </Link>
+            </button>
           </li>
         </ul>
       </nav>

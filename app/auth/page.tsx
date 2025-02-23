@@ -15,9 +15,13 @@ const LoginForm: React.FC = () => {
       });
 
       const data = await response.json();
-      router.push("/user");
       if (data.success) {
         localStorage.setItem("token", data.data[0][0]);
+        if (values.name == "admin") {
+          router.push("/admin");
+        } else {
+          router.push("/user");
+        }
       } else {
         message.error(data.message || "Login failed!");
       }
