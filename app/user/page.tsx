@@ -32,8 +32,6 @@ const AttendanceCheckIn: React.FC = () => {
 
     if (end < start) end += 24;
 
-    const totalHours = end - start;
-
     let dayHours = 0;
     let nightHours = 0;
 

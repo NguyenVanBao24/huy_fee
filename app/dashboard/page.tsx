@@ -100,7 +100,8 @@ const Dashboard: React.FC = () => {
   // Tính tổng giờ làm việc
   const totalHours = data.reduce((sum: number, record: AttendanceRecord) => {
     let personHours = 0;
-    for (let day in record) {
+    for (const day in record) {
+      // Thay let thành const
       if (
         day !== "id" &&
         day !== "Name" &&
