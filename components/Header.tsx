@@ -20,6 +20,7 @@ const Header: React.FC = () => {
             { href: "/", name: "Home" },
             { href: "/user", name: "User" },
             { href: "/admin", name: "Admin" },
+            { href: "/dashboard", name: "Dashboard" },
           ].map((item) => (
             <li key={item.href}>
               <Link href={item.href} className="hover:text-gray-300 transition">
