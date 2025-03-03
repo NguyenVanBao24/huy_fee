@@ -15,8 +15,6 @@ const AttendanceCheckIn: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState<SalaryData[]>([]);
   const [totalSalary, setTotalSalary] = useState<number>(0);
-  const [totaltimeBySun, setTotaltimeBySun] = useState<number>(0);
-  const [totaltimeByMoon, setTotaltimeByMoon] = useState<number>(0);
 
   // Lấy token từ localStorage
   useEffect(() => {
