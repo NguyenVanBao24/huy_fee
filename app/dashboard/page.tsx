@@ -18,9 +18,28 @@ interface AttendanceRecord {
   [key: string]: [string, string, number] | string;
 }
 
-// Định nghĩa kiểu dữ liệu cho biểu đồ
-interface ChartData {
+// Định nghĩa kiểu dữ liệu cho biểu đồ giờ làm theo tháng
+interface HoursByMonthChartData {
   date: string;
+  dayHours: number;
+  nightHours: number;
+}
+
+// Định nghĩa kiểu dữ liệu cho biểu đồ tiền lương theo tháng
+interface SalaryByMonthChartData {
+  date: string;
+  salary: number;
+}
+
+// Định nghĩa kiểu dữ liệu cho biểu đồ tiền lương theo cá nhân
+interface SalaryByPersonChartData {
+  name: string;
+  salary: number;
+}
+
+// Định nghĩa kiểu dữ liệu cho biểu đồ giờ làm theo cá nhân
+interface HoursByPersonChartData {
+  name: string;
   dayHours: number;
   nightHours: number;
 }
@@ -47,13 +66,13 @@ const Dashboard: React.FC = () => {
         }
 
         const rawData = result.data;
-        const headers = rawData[0]; // Tiêu đề cột
+        const headers = rawData[0];
         const processedData: AttendanceRecord[] = [];
 
         for (let i = 1; i < rawData.length; i += 3) {
-          const personInfo = rawData[i]; // Dòng chứa id, Name, Phone
-          const hoursInfo = rawData[i + 1] || []; // Dòng chứa totalHour, typeHour
-          const valuesInfo = rawData[i + 2] || []; // Dòng chứa giá trị số
+          const personInfo = rawData[i];
+          const hoursInfo = rawData[i + 1] || [];
+          const valuesInfo = rawData[i + 2] || [];
 
           if (!personInfo || personInfo.length < 2) continue;
 
@@ -63,11 +82,10 @@ const Dashboard: React.FC = () => {
             Phone: personInfo[2] || "",
           };
 
-          // Gán dữ liệu cho từng ngày
           for (let j = 3; j < headers.length; j++) {
             const date = headers[j];
-            const totalHour = personInfo[j] || ""; // totalHour từ dòng personInfo
-            const typeHour = hoursInfo[j] || ""; // typeHour từ dòng hoursInfo
+            const totalHour = personInfo[j] || "";
+            const typeHour = hoursInfo[j] || "";
             const value = parseFloat(valuesInfo[j] || "0") || 0;
 
             record[date] = [totalHour, typeHour, value];
@@ -97,30 +115,39 @@ const Dashboard: React.FC = () => {
     console.log("State data hiện tại:", data);
   }, [data]);
 
-  // Tính tổng giờ làm việc
-  const totalHours = data.reduce((sum: number, record: AttendanceRecord) => {
-    let personHours = 0;
-    for (const day in record) {
-      // Thay let thành const
-      if (
-        day !== "id" &&
-        day !== "Name" &&
-        day !== "Phone" &&
-        Array.isArray(record[day]) &&
-        record[day][1]
-      ) {
-        const hours = record[day][1].split("-").reduce((acc: number, h: string) => {
-          const num = parseFloat(h.replace(/[ST]/g, "").replace(",", "."));
-          return acc + (isNaN(num) ? 0 : num);
-        }, 0);
-        personHours += hours;
+  // Tính tổng giờ làm việc cho ca sáng (S) và ca tối (T)
+  const { dayHoursTotal, nightHoursTotal } = data.reduce(
+    (totals: { dayHoursTotal: number; nightHoursTotal: number }, record: AttendanceRecord) => {
+      for (const day in record) {
+        if (
+          day !== "id" &&
+          day !== "Name" &&
+          day !== "Phone" &&
+          Array.isArray(record[day]) &&
+          record[day][1]
+        ) {
+          const typeHour = record[day][1];
+          if (typeHour.includes("S")) {
+            const dayHours = parseFloat(typeHour.split("-")[0].replace("S", "").replace(",", "."));
+            totals.dayHoursTotal += isNaN(dayHours) ? 0 : dayHours;
+          }
+          if (typeHour.includes("T")) {
+            const nightHours = parseFloat(
+              (typeHour.includes("-") ? typeHour.split("-")[1] : typeHour)
+                .replace("T", "")
+                .replace(",", ".")
+            );
+            totals.nightHoursTotal += isNaN(nightHours) ? 0 : nightHours;
+          }
+        }
       }
-    }
-    return sum + personHours;
-  }, 0);
+      return totals;
+    },
+    { dayHoursTotal: 0, nightHoursTotal: 0 }
+  );
 
-  // Dữ liệu cho biểu đồ Bar (dùng headers từ API thay vì cố định 31 ngày)
-  const chartData: ChartData[] =
+  // Biểu đồ 1: Giờ làm theo tháng (theo ngày)
+  const hoursByMonthChartData: HoursByMonthChartData[] =
     data.length > 0
       ? Object.keys(data[0])
           .filter((key) => key !== "id" && key !== "Name" && key !== "Phone")
@@ -151,9 +178,57 @@ const Dashboard: React.FC = () => {
           .filter((d) => d.dayHours > 0 || d.nightHours > 0)
       : [];
 
-  console.log("Dữ liệu biểu đồ:", chartData);
+  // Biểu đồ 2: Tiền lương theo tháng (theo ngày)
+  const salaryByMonthChartData: SalaryByMonthChartData[] =
+    data.length > 0
+      ? Object.keys(data[0])
+          .filter((key) => key !== "id" && key !== "Name" && key !== "Phone")
+          .map((date) => {
+            const salary = data.reduce((sum: number, record: AttendanceRecord) => {
+              return sum + (record[date] as [string, string, number])[2];
+            }, 0);
+            return { date, salary };
+          })
+          .filter((d) => d.salary > 0)
+      : [];
 
-  // Cột cho bảng (dùng headers từ API)
+  // Biểu đồ 3: Tiền lương theo cá nhân
+  const salaryByPersonChartData: SalaryByPersonChartData[] = data.map((record) => {
+    const salary = Object.keys(record)
+      .filter((day) => day !== "id" && day !== "Name" && day !== "Phone")
+      .reduce((sum, day) => sum + (record[day] as [string, string, number])[2], 0);
+    return { name: record.Name, salary };
+  });
+
+  // Biểu đồ 4: Giờ làm theo cá nhân
+  const hoursByPersonChartData: HoursByPersonChartData[] = data.map((record) => {
+    let dayHours = 0;
+    let nightHours = 0;
+    for (const day in record) {
+      if (
+        day !== "id" &&
+        day !== "Name" &&
+        day !== "Phone" &&
+        Array.isArray(record[day]) &&
+        record[day][1]
+      ) {
+        const typeHour = record[day][1];
+        if (typeHour.includes("S")) {
+          dayHours += parseFloat(typeHour.split("-")[0].replace("S", "").replace(",", "."));
+        }
+        if (typeHour.includes("T")) {
+          nightHours += parseFloat(
+            (typeHour.includes("-") ? typeHour.split("-")[1] : typeHour)
+              .replace("T", "")
+              .replace(",", ".")
+          );
+        }
+      }
+    }
+    return { name: record.Name, dayHours, nightHours };
+  });
+
+  // Cột cho bảng
   const columns =
     data.length > 0
       ? [
@@ -182,36 +257,107 @@ const Dashboard: React.FC = () => {
       <h1 className="text-3xl font-bold mb-6 text-center">Dashboard Chấm Công</h1>
 
       <Row gutter={[16, 16]}>
+        {/* Tổng số giờ ca sáng */}
         <Col xs={24} md={8}>
           <Card>
             <Statistic
-              title="Tổng số giờ làm việc"
-              value={totalHours}
+              title="Tổng giờ ca sáng (S)"
+              value={dayHoursTotal}
               precision={1}
               suffix="giờ"
-              valueStyle={{ color: "#3f8600" }}
+              valueStyle={{ color: "#0088FE" }}
             />
           </Card>
         </Col>
 
-        <Col xs={24} md={16}>
-          <Card title="Giờ làm việc theo ngày">
-            {chartData.length > 0 ? (
-              <BarChart width={600} height={300} data={chartData}>
+        {/* Tổng số giờ ca tối */}
+        <Col xs={24} md={8}>
+          <Card>
+            <Statistic
+              title="Tổng giờ ca tối (T)"
+              value={nightHoursTotal}
+              precision={1}
+              suffix="giờ"
+              valueStyle={{ color: "#FF8042" }}
+            />
+          </Card>
+        </Col>
+
+        {/* Biểu đồ 1: Giờ làm theo tháng */}
+        <Col xs={24} md={12}>
+          <Card title="Giờ làm theo tháng (Tháng 3/25)">
+            {hoursByMonthChartData.length > 0 ? (
+              <BarChart width={500} height={300} data={hoursByMonthChartData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="date" />
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="dayHours" fill="#0088FE" name="Ca ngày (S)" />
-                <Bar dataKey="nightHours" fill="#FF8042" name="Ca đêm (T)" />
+                <Bar dataKey="dayHours" fill="#0088FE" name="Ca sáng (S)" />
+                <Bar dataKey="nightHours" fill="#FF8042" name="Ca tối (T)" />
               </BarChart>
             ) : (
-              <p className="text-center">Không có dữ liệu để hiển thị biểu đồ</p>
+              <p className="text-center">Không có dữ liệu để hiển thị</p>
             )}
           </Card>
         </Col>
 
+        {/* Biểu đồ 2: Tiền lương theo tháng */}
+        <Col xs={24} md={12}>
+          <Card title="Tiền lương theo tháng (Tháng 3/25)">
+            {salaryByMonthChartData.length > 0 ? (
+              <BarChart width={500} height={300} data={salaryByMonthChartData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="date" />
+                <YAxis />
+                <Tooltip formatter={(value) => `${value} VNĐ`} />
+                <Legend />
+                <Bar dataKey="salary" fill="#52c41a" name="Tiền lương" />
+              </BarChart>
+            ) : (
+              <p className="text-center">Không có dữ liệu để hiển thị</p>
+            )}
+          </Card>
+        </Col>
+
+        {/* Biểu đồ 3: Tiền lương theo cá nhân */}
+        <Col xs={24} md={12}>
+          <Card title="Tiền lương theo cá nhân (Tháng 3/25)">
+            {salaryByPersonChartData.length > 0 ? (
+              <BarChart width={500} height={300} data={salaryByPersonChartData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip formatter={(value) => `${value} VNĐ`} />
+                <Legend />
+                <Bar dataKey="salary" fill="#52c41a" name="Tiền lương" />
+              </BarChart>
+            ) : (
+              <p className="text-center">Không có dữ liệu để hiển thị</p>
+            )}
+          </Card>
+        </Col>
+
+        {/* Biểu đồ 4: Giờ làm theo cá nhân */}
+        <Col xs={24} md={12}>
+          <Card title="Giờ làm theo cá nhân (Tháng 3/25)">
+            {hoursByPersonChartData.length > 0 ? (
+              <BarChart width={500} height={300} data={hoursByPersonChartData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="dayHours" fill="#0088FE" name="Ca sáng (S)" />
+                <Bar dataKey="nightHours" fill="#FF8042" name="Ca tối (T)" />
+              </BarChart>
+            ) : (
+              <p className="text-center">Không có dữ liệu để hiển thị</p>
+            )}
+          </Card>
+        </Col>
+
+        {/* Bảng dữ liệu */}
         <Col xs={24}>
           <Card title="Danh sách chấm công">
             <Table
