@@ -304,7 +304,7 @@ const Dashboard: React.FC = () => {
             />
           </Card>
         </Col>
-        Tổng tiền ca tối
+        {/* Tổng tiền ca tối
         <Col xs={24} md={6}>
           <Card>
             <Statistic
@@ -315,7 +315,7 @@ const Dashboard: React.FC = () => {
               valueStyle={{ color: "#52c41a" }}
             />
           </Card>
-        </Col>
+        </Col> */}
         {/* Biểu đồ 1: Giờ làm theo tháng */}
         <Col xs={24} md={12}>
           <Card title="Giờ làm theo tháng (Tháng 2/25)">
