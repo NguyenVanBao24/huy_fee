@@ -156,7 +156,7 @@ const Dashboard: React.FC = () => {
     },
     { dayHoursTotal: 0, nightHoursTotal: 0, daySalaryTotal: 0, nightSalaryTotal: 0 }
   );
-
+  console.log(nightSalaryTotal);
   // Biểu đồ 1: Giờ làm theo tháng (theo ngày)
   const hoursByMonthChartData: HoursByMonthChartData[] =
     data.length > 0
