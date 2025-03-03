@@ -6,6 +6,8 @@ import Link from "next/link";
 interface SalaryData {
   name: string;
   salary: number;
+  timeBySun: number;
+  timeByMoon: number;
 }
 
 const AttendanceCheckIn: React.FC = () => {
@@ -13,6 +15,8 @@ const AttendanceCheckIn: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState<SalaryData[]>([]);
   const [totalSalary, setTotalSalary] = useState<number>(0);
+  const [totaltimeBySun, setTotaltimeBySun] = useState<number>(0);
+  const [totaltimeByMoon, setTotaltimeByMoon] = useState<number>(0);
 
   // Lấy token từ localStorage
   useEffect(() => {
@@ -49,6 +53,8 @@ const AttendanceCheckIn: React.FC = () => {
           const total = formattedData.reduce((sum, item) => sum + item.salary, 0);
           setTotalSalary(total);
 
+          console.log(formattedData, "formattedDataformattedDataformattedData");
+
           message.success("Chấm công thành công!");
         } else {
           message.error("Chấm công thất bại, vui lòng thử lại.");
@@ -65,7 +71,7 @@ const AttendanceCheckIn: React.FC = () => {
   }, [token]);
 
   // Nếu token không phải admin => Không có quyền
-  if (token !== "admin") {
+  if (token !== "Nguyễn Phạm Quốc Thắng" && token !== "Nguyễn Thị Uyên") {
     return (
       <div className="text-center mt-10">
         <Link href="/" className="text-blue-500 underline">
@@ -96,6 +102,12 @@ const AttendanceCheckIn: React.FC = () => {
                     <p>
                       <strong>Lương:</strong> {employee.salary.toLocaleString()} VND
                     </p>
+                    {/* <p>
+                      <strong>Giờ làm ca sáng:</strong> {employee.salary.toLocaleString()} VND
+                    </p>
+                    <p>
+                      <strong>Giờ làm ca tối:</strong> {employee.salary.toLocaleString()} VND
+                    </p> */}
                   </div>
                 )
             )}

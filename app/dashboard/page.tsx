@@ -115,9 +115,17 @@ const Dashboard: React.FC = () => {
     console.log("State data hiện tại:", data);
   }, [data]);
 
-  // Tính tổng giờ làm việc cho ca sáng (S) và ca tối (T)
-  const { dayHoursTotal, nightHoursTotal } = data.reduce(
-    (totals: { dayHoursTotal: number; nightHoursTotal: number }, record: AttendanceRecord) => {
+  // Tính tổng giờ làm việc và tiền lương cho ca sáng (S) và ca tối (T)
+  const { dayHoursTotal, nightHoursTotal, daySalaryTotal, nightSalaryTotal } = data.reduce(
+    (
+      totals: {
+        dayHoursTotal: number;
+        nightHoursTotal: number;
+        daySalaryTotal: number;
+        nightSalaryTotal: number;
+      },
+      record: AttendanceRecord
+    ) => {
       for (const day in record) {
         if (
           day !== "id" &&
@@ -127,9 +135,11 @@ const Dashboard: React.FC = () => {
           record[day][1]
         ) {
           const typeHour = record[day][1];
+          const salary = record[day][2];
           if (typeHour.includes("S")) {
             const dayHours = parseFloat(typeHour.split("-")[0].replace("S", "").replace(",", "."));
             totals.dayHoursTotal += isNaN(dayHours) ? 0 : dayHours;
+            totals.daySalaryTotal += salary;
           }
           if (typeHour.includes("T")) {
             const nightHours = parseFloat(
@@ -138,12 +148,13 @@ const Dashboard: React.FC = () => {
                 .replace(",", ".")
             );
             totals.nightHoursTotal += isNaN(nightHours) ? 0 : nightHours;
+            totals.nightSalaryTotal += salary;
           }
         }
       }
       return totals;
     },
-    { dayHoursTotal: 0, nightHoursTotal: 0 }
+    { dayHoursTotal: 0, nightHoursTotal: 0, daySalaryTotal: 0, nightSalaryTotal: 0 }
   );
 
   // Biểu đồ 1: Giờ làm theo tháng (theo ngày)
@@ -258,7 +269,7 @@ const Dashboard: React.FC = () => {
 
       <Row gutter={[16, 16]}>
         {/* Tổng số giờ ca sáng */}
-        <Col xs={24} md={8}>
+        <Col xs={24} md={6}>
           <Card>
             <Statistic
               title="Tổng giờ ca sáng (S)"
@@ -271,7 +282,7 @@ const Dashboard: React.FC = () => {
         </Col>
 
         {/* Tổng số giờ ca tối */}
-        <Col xs={24} md={8}>
+        <Col xs={24} md={6}>
           <Card>
             <Statistic
               title="Tổng giờ ca tối (T)"
@@ -279,6 +290,32 @@ const Dashboard: React.FC = () => {
               precision={1}
               suffix="giờ"
               valueStyle={{ color: "#FF8042" }}
+            />
+          </Card>
+        </Col>
+
+        {/* Tổng tiền ca sáng */}
+        <Col xs={24} md={6}>
+          <Card>
+            <Statistic
+              title="Tổng tiền ca sáng (S)"
+              value={daySalaryTotal}
+              precision={0}
+              suffix="VNĐ"
+              valueStyle={{ color: "#52c41a" }}
+            />
+          </Card>
+        </Col>
+
+        {/* Tổng tiền ca tối */}
+        <Col xs={24} md={6}>
+          <Card>
+            <Statistic
+              title="Tổng tiền ca tối (T)"
+              value={nightSalaryTotal}
+              precision={0}
+              suffix="VNĐ"
+              valueStyle={{ color: "#52c41a" }}
             />
           </Card>
         </Col>
