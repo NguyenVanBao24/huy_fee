@@ -322,7 +322,7 @@ const Dashboard: React.FC = () => {
 
         {/* Biểu đồ 1: Giờ làm theo tháng */}
         <Col xs={24} md={12}>
-          <Card title="Giờ làm theo tháng (Tháng 3/25)">
+          <Card title="Giờ làm theo tháng (Tháng 2/25)">
             {hoursByMonthChartData.length > 0 ? (
               <BarChart width={500} height={300} data={hoursByMonthChartData}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -341,7 +341,7 @@ const Dashboard: React.FC = () => {
 
         {/* Biểu đồ 2: Tiền lương theo tháng */}
         <Col xs={24} md={12}>
-          <Card title="Tiền lương theo tháng (Tháng 3/25)">
+          <Card title="Tiền lương theo tháng (Tháng 2/25)">
             {salaryByMonthChartData.length > 0 ? (
               <BarChart width={500} height={300} data={salaryByMonthChartData}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -359,7 +359,7 @@ const Dashboard: React.FC = () => {
 
         {/* Biểu đồ 3: Tiền lương theo cá nhân */}
         <Col xs={24} md={12}>
-          <Card title="Tiền lương theo cá nhân (Tháng 3/25)">
+          <Card title="Tiền lương theo cá nhân (Tháng 2/25)">
             {salaryByPersonChartData.length > 0 ? (
               <BarChart width={500} height={300} data={salaryByPersonChartData}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -377,7 +377,7 @@ const Dashboard: React.FC = () => {
 
         {/* Biểu đồ 4: Giờ làm theo cá nhân */}
         <Col xs={24} md={12}>
-          <Card title="Giờ làm theo cá nhân (Tháng 3/25)">
+          <Card title="Giờ làm theo cá nhân (Tháng 2/25)">
             {hoursByPersonChartData.length > 0 ? (
               <BarChart width={500} height={300} data={hoursByPersonChartData}>
                 <CartesianGrid strokeDasharray="3 3" />
