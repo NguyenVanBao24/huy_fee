@@ -280,7 +280,6 @@ const Dashboard: React.FC = () => {
             />
           </Card>
         </Col>
-
         {/* Tổng số giờ ca tối */}
         <Col xs={24} md={6}>
           <Card>
@@ -293,7 +292,6 @@ const Dashboard: React.FC = () => {
             />
           </Card>
         </Col>
-
         {/* Tổng tiền ca sáng */}
         <Col xs={24} md={6}>
           <Card>
@@ -306,8 +304,7 @@ const Dashboard: React.FC = () => {
             />
           </Card>
         </Col>
-
-        {/* Tổng tiền ca tối */}
+        Tổng tiền ca tối
         <Col xs={24} md={6}>
           <Card>
             <Statistic
@@ -319,7 +316,6 @@ const Dashboard: React.FC = () => {
             />
           </Card>
         </Col>
-
         {/* Biểu đồ 1: Giờ làm theo tháng */}
         <Col xs={24} md={12}>
           <Card title="Giờ làm theo tháng (Tháng 2/25)">
@@ -338,7 +334,6 @@ const Dashboard: React.FC = () => {
             )}
           </Card>
         </Col>
-
         {/* Biểu đồ 2: Tiền lương theo tháng */}
         <Col xs={24} md={12}>
           <Card title="Tiền lương theo tháng (Tháng 2/25)">
@@ -356,7 +351,6 @@ const Dashboard: React.FC = () => {
             )}
           </Card>
         </Col>
-
         {/* Biểu đồ 3: Tiền lương theo cá nhân */}
         <Col xs={24} md={12}>
           <Card title="Tiền lương theo cá nhân (Tháng 2/25)">
@@ -374,7 +368,6 @@ const Dashboard: React.FC = () => {
             )}
           </Card>
         </Col>
-
         {/* Biểu đồ 4: Giờ làm theo cá nhân */}
         <Col xs={24} md={12}>
           <Card title="Giờ làm theo cá nhân (Tháng 2/25)">
@@ -393,7 +386,6 @@ const Dashboard: React.FC = () => {
             )}
           </Card>
         </Col>
-
         {/* Bảng dữ liệu */}
         <Col xs={24}>
           <Card title="Danh sách chấm công">
