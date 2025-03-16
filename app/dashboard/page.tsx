@@ -156,7 +156,7 @@ const Dashboard: React.FC = () => {
     },
     { dayHoursTotal: 0, nightHoursTotal: 0, daySalaryTotal: 0, nightSalaryTotal: 0 }
   );
-  console.log(nightSalaryTotal);
+
   // Biểu đồ 1: Giờ làm theo tháng (theo ngày)
   const hoursByMonthChartData: HoursByMonthChartData[] =
     data.length > 0
@@ -296,7 +296,7 @@ const Dashboard: React.FC = () => {
         <Col xs={24} md={6}>
           <Card>
             <Statistic
-              title="Tổng tiền ca sáng (S)"
+              title="Tổng tiền"
               value={daySalaryTotal}
               precision={0}
               suffix="VNĐ"
@@ -304,7 +304,7 @@ const Dashboard: React.FC = () => {
             />
           </Card>
         </Col>
-        {/* Tổng tiền ca tối
+        Tổng tiền ca tối
         <Col xs={24} md={6}>
           <Card>
             <Statistic
@@ -315,7 +315,7 @@ const Dashboard: React.FC = () => {
               valueStyle={{ color: "#52c41a" }}
             />
           </Card>
-        </Col> */}
+        </Col>
         {/* Biểu đồ 1: Giờ làm theo tháng */}
         <Col xs={24} md={12}>
           <Card title="Giờ làm theo tháng (Tháng 2/25)">

@@ -1,16 +1,11 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Input, Button, message, Card } from "antd";
+import { Input, Button, message, Card, DatePicker } from "antd";
+import dayjs from "dayjs";
 import Link from "next/link";
 
 const AttendanceCheckIn: React.FC = () => {
-  const now = new Date();
-  const currentDate = now.toLocaleDateString("vi-VN");
-  const currentTime = now.toLocaleTimeString("vi-VN", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  });
+  const now = dayjs();
 
   const [name, setName] = useState<string | null>("");
   const [loading, setLoading] = useState(false);
@@ -19,6 +14,7 @@ const AttendanceCheckIn: React.FC = () => {
   const [endHour, setEndHour] = useState("15");
   const [endMinute, setEndMinute] = useState("00");
   const [shiftResult, setShiftResult] = useState("8S");
+  const [selectedDate, setSelectedDate] = useState(dayjs());
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -29,7 +25,6 @@ const AttendanceCheckIn: React.FC = () => {
   const calculateShift = () => {
     const start = parseInt(startHour) + parseInt(startMinute) / 60;
     let end = parseInt(endHour) + parseInt(endMinute) / 60;
-
     if (end < start) end += 24;
 
     let dayHours = 0;
@@ -55,7 +50,6 @@ const AttendanceCheckIn: React.FC = () => {
         .toFixed(1)
         .replace(".", ",")}T`;
     } else if (dayHours > 0) {
-      // Nếu số giờ là số nguyên (kết thúc bằng ,0) thì bỏ phần thập phân
       const dayHoursStr = dayHours.toFixed(1).replace(".", ",");
       result = dayHoursStr.endsWith(",0") ? `${Math.floor(dayHours)}S` : `${dayHoursStr}S`;
     } else {
@@ -67,22 +61,25 @@ const AttendanceCheckIn: React.FC = () => {
   };
 
   const handleCheckIn = async () => {
-    const startTime = `${startHour}${parseInt(startHour) < 12 ? "AM" : "PM"}`;
-    const endTime = `${endHour}${parseInt(endHour) < 12 ? "AM" : "PM"}`;
-    const totalHour = `${startTime}-${endTime}`;
+    const totalHour = `${startHour}${parseInt(startHour) < 12 ? "AM" : "PM"}-${endHour}${
+      parseInt(endHour) < 12 ? "AM" : "PM"
+    }`;
     const typeHour = shiftResult;
-
     setLoading(true);
-    const request = { name, totalHour, typeHour };
+    const request = {
+      name,
+      formatteddate: selectedDate.format("YYYY-MM-DD"),
+      formattedTime: selectedDate.format("HH:mm"),
+      totalHour,
+      typeHour,
+    };
 
     console.log("Request gửi đi:", request);
 
     try {
       const response = await fetch("https://bup-be.vercel.app/api/H/post-attendance", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(request),
       });
       const result = await response.json();
@@ -113,57 +110,48 @@ const AttendanceCheckIn: React.FC = () => {
 
         <div className="space-y-5">
           <Input
-            placeholder="Nhập tên của bạn"
-            value={name ? name : ""}
-            onChange={(e) => setName(e.target.value)}
+            value={name || ""}
             className="rounded-lg border-gray-300"
             prefix={<span className="text-gray-400">👤</span>}
             disabled
           />
 
-          <Input
-            value={`${currentDate} - ${currentTime}`}
-            className="rounded-lg border-gray-300"
-            prefix={<span className="text-gray-400">⏰</span>}
-            disabled
+          <DatePicker
+            value={selectedDate}
+            onChange={(date) => setSelectedDate(date || now)}
+            className="w-full rounded-lg border-gray-300"
+            showTime
+            format="YYYY-MM-DD HH:mm"
           />
 
           <div className="flex gap-2">
             <Input
-              placeholder="Giờ bắt đầu"
               value={startHour}
               onChange={(e) => setStartHour(e.target.value.padStart(2, "0"))}
-              maxLength={2}
               className="rounded-lg w-20"
               type="number"
               min="0"
               max="23"
             />
             <Input
-              placeholder="Phút bắt đầu"
               value={startMinute}
               onChange={(e) => setStartMinute(e.target.value.padStart(2, "0"))}
-              maxLength={2}
               className="rounded-lg w-20"
               type="number"
               min="0"
               max="59"
             />
             <Input
-              placeholder="Giờ kết thúc"
               value={endHour}
               onChange={(e) => setEndHour(e.target.value.padStart(2, "0"))}
-              maxLength={2}
               className="rounded-lg w-20"
               type="number"
               min="0"
               max="23"
             />
             <Input
-              placeholder="Phút kết thúc"
               value={endMinute}
               onChange={(e) => setEndMinute(e.target.value.padStart(2, "0"))}
-              maxLength={2}
               className="rounded-lg w-20"
               type="number"
               min="0"
@@ -194,7 +182,7 @@ const AttendanceCheckIn: React.FC = () => {
   ) : (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <Link
-        href={"/auth"}
+        href="/auth"
         className="text-blue-600 hover:text-blue-800 font-medium text-lg transition-colors duration-200"
       >
         NHẤP VÀO ĐỂ ĐI ĐĂNG NHẬP THÔI
