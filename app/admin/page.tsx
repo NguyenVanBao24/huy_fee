@@ -29,7 +29,7 @@ const AttendanceCheckIn: React.FC = () => {
       setLoading(true);
 
       try {
-        const response = await fetch("https://bup-be.vercel.app/api/H/get-all-salary");
+        const response = await fetch("https://bup-be.onrender.com/api/H/get-all-salary");
 
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);

@@ -29,7 +29,7 @@ const AttendanceTable: React.FC = () => {
   const fetchAttendanceData = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("https://bup-be.vercel.app/api/H/get-all-attendance");
+      const response = await fetch("https://bup-be.onrender.com/api/H/get-all-attendance");
       if (!response.ok) throw new Error("Failed to fetch attendance data");
 
       const { data }: { data: string[][] } = await response.json();

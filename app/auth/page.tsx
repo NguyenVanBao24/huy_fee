@@ -6,7 +6,7 @@ const LoginForm: React.FC = () => {
   const router = useRouter();
   const onFinish = async (values: { name: string; password: string }) => {
     try {
-      const response = await fetch("https://bup-be.vercel.app/api/H/auth-login", {
+      const response = await fetch("https://bup-be.onrender.com/api/H/auth-login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

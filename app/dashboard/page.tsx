@@ -52,7 +52,7 @@ const Dashboard: React.FC = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await fetch("https://bup-be.vercel.app/api/H/get-all-attendance");
+        const response = await fetch("https://bup-be.onrender.com/api/H/get-all-attendance");
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -116,7 +116,7 @@ const Dashboard: React.FC = () => {
   }, [data]);
 
   // Tính tổng giờ làm việc và tiền lương cho ca sáng (S) và ca tối (T)
-  const { dayHoursTotal, nightHoursTotal, daySalaryTotal, nightSalaryTotal } = data.reduce(
+  const { dayHoursTotal, nightHoursTotal, daySalaryTotal } = data.reduce(
     (
       totals: {
         dayHoursTotal: number;
@@ -318,7 +318,7 @@ const Dashboard: React.FC = () => {
         </Col> */}
         {/* Biểu đồ 1: Giờ làm theo tháng */}
         <Col xs={24} md={12}>
-          <Card title="Giờ làm theo tháng (Tháng 2/25)">
+          <Card title="Giờ làm theo tháng (Tháng 4/25)">
             {hoursByMonthChartData.length > 0 ? (
               <BarChart width={500} height={300} data={hoursByMonthChartData}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -336,7 +336,7 @@ const Dashboard: React.FC = () => {
         </Col>
         {/* Biểu đồ 2: Tiền lương theo tháng */}
         <Col xs={24} md={12}>
-          <Card title="Tiền lương theo tháng (Tháng 2/25)">
+          <Card title="Tiền lương theo tháng (Tháng 4/25)">
             {salaryByMonthChartData.length > 0 ? (
               <BarChart width={500} height={300} data={salaryByMonthChartData}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -353,7 +353,7 @@ const Dashboard: React.FC = () => {
         </Col>
         {/* Biểu đồ 3: Tiền lương theo cá nhân */}
         <Col xs={24} md={12}>
-          <Card title="Tiền lương theo cá nhân (Tháng 2/25)">
+          <Card title="Tiền lương theo cá nhân (Tháng 4/25)">
             {salaryByPersonChartData.length > 0 ? (
               <BarChart width={500} height={300} data={salaryByPersonChartData}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -370,7 +370,7 @@ const Dashboard: React.FC = () => {
         </Col>
         {/* Biểu đồ 4: Giờ làm theo cá nhân */}
         <Col xs={24} md={12}>
-          <Card title="Giờ làm theo cá nhân (Tháng 2/25)">
+          <Card title="Giờ làm theo cá nhân (Tháng 4/25)">
             {hoursByPersonChartData.length > 0 ? (
               <BarChart width={500} height={300} data={hoursByPersonChartData}>
                 <CartesianGrid strokeDasharray="3 3" />

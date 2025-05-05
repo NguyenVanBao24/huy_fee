@@ -77,7 +77,7 @@ const AttendanceCheckIn: React.FC = () => {
     console.log("Request gửi đi:", request);
 
     try {
-      const response = await fetch("https://bup-be.vercel.app/api/H/post-attendance", {
+      const response = await fetch("https://bup-be.onrender.com/api/H/post-attendance", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(request),
